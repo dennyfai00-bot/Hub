@@ -134,37 +134,41 @@
         </section>
 
         <section>
-            <h2 class="category-title">🚗 GTA Online News</h2>
+            <h2 class="category-title">🚗 GTA Online</h2>
             <div id="gta-news"></div>
         </section>
 
         <section>
-            <h2 class="category-title">💰 GTA Online Glitches</h2>
-            <div id="gta-glitch-news"></div>
-        </section>
-
-        <section>
-            <h2 class="category-title">💻 Tecnologia IT</h2>
+            <h2 class="category-title">💻 Tecnologia</h2>
             <div id="tech-news"></div>
         </section>
 
         <section>
-            <h2 class="category-title">🏎️ Formula 1 IT</h2>
+            <h2 class="category-title">🏎️ Formula 1</h2>
             <div id="f1-news"></div>
         </section>
     </div>
 
     <script>
+        // LA TUA CHIAVE INSERITA QUI
         const API_KEY = 'C95461d430d64b2f9b13e945d8959c5f';
         let timerSeconds = 3 * 60 * 60;
 
         async function fetchCategory(query, elementId) {
             const container = document.getElementById(elementId);
-            container.innerHTML = "<p style='padding:20px; color:#00ccff; font-size:0.8rem;'>Intercettando segnali...</p>";
+            container.innerHTML = "<p style='padding:20px; color:#00ccff; font-size:0.8rem;'>Ricerca segnale...</p>";
             
             try {
-                // Cerchiamo notizie in italiano (language=it) per le query specifiche
-                const response = await fetch(`https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&sortBy=publishedAt&pageSize=4&language=it&apiKey=${API_KEY}`);
+                // Modifica URL: NewsAPI blocca a volte le richieste da browser (CORS). 
+                // Se non funziona, l'errore apparirà nel blocco catch.
+                const url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&sortBy=publishedAt&pageSize=3&language=it&apiKey=${API_KEY}`;
+                
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`Errore API: ${response.status}`);
+                }
+
                 const data = await response.json();
 
                 if (data.articles && data.articles.length > 0) {
@@ -172,23 +176,28 @@
                         <div class="news-bubble" onclick="toggleNews(this)">
                             <div class="news-header">
                                 <div>
-                                    <span class="news-time">${new Date(article.publishedAt).toLocaleString('it-IT')}</span>
+                                    <span class="news-time">${new Date(article.publishedAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} - ${new Date(article.publishedAt).toLocaleDateString()}</span>
                                     <div class="news-headline">${article.title}</div>
                                 </div>
                                 <div class="icon-plus">＋</div>
                             </div>
                             <div class="news-details">
-                                ${article.description || "Dettagli non disponibili. Clicca il link qui sotto per l'articolo completo."}
+                                ${article.description ? article.description : "Nessuna descrizione disponibile."}
                                 <br><br>
-                                <a href="${article.url}" target="_blank" style="color:#00ccff; text-decoration:none; font-weight:bold; border-bottom:1px solid #00ccff;">LEGGI FONTE UFFICIALE →</a>
+                                <a href="${article.url}" target="_blank" style="color:#00ccff; text-decoration:none; font-weight:bold; border-bottom:1px solid #00ccff;">LEGGI TUTTO →</a>
                             </div>
                         </div>
                     `).join('');
                 } else {
-                    container.innerHTML = "<p style='padding:20px; font-size:0.9rem; color:#666;'>Nessun aggiornamento recente trovato.</p>";
+                    container.innerHTML = "<p style='padding:20px; font-size:0.9rem; color:#666;'>Nessuna notizia recente trovata per questo argomento.</p>";
                 }
             } catch (error) {
-                container.innerHTML = "<p style='padding:20px; color:#ff4444;'>Errore critico di connessione.</p>";
+                console.error(error);
+                container.innerHTML = `<p style='padding:20px; color:#ff4444; font-size:0.8rem;'>
+                    Errore caricamento. <br>
+                    Possibile causa: Blocco NewsAPI (Piano Gratuito).<br>
+                    Dettaglio: ${error.message}
+                </p>`;
             }
         }
 
@@ -197,18 +206,18 @@
             btn.classList.add('loading');
             btn.innerText = "Sincronizzazione...";
 
-            // AGGIORNATE LE CHIAMATE PER INCLUDERE LE NUOVE SEZIONI
+            // Eseguiamo tutte le ricerche
             Promise.all([
-                fetchCategory('videogiochi OR gaming', 'gaming-news'),
+                fetchCategory('videogiochi', 'gaming-news'),
                 fetchCategory('Rainbow Six Siege', 'r6-news'),
                 fetchCategory('Call of Duty Warzone', 'warzone-news'),
                 fetchCategory('GTA Online', 'gta-news'),
-                fetchCategory('GTA Online money glitch', 'gta-glitch-news'), // Ricerca specifica per i glitch
-                fetchCategory('tecnologia OR tech', 'tech-news'),
-                fetchCategory('formula 1 OR f1', 'f1-news')
+                fetchCategory('Apple OR iPhone OR Intelligenza Artificiale', 'tech-news'),
+                fetchCategory('Ferrari OR Formula 1', 'f1-news')
             ]).then(() => {
-                document.getElementById('last-update').innerText = new Date().toLocaleTimeString('it-IT');
-                timerSeconds = 3 * 60 * 60;
+                const now = new Date();
+                document.getElementById('last-update').innerText = now.getHours() + ":" + String(now.getMinutes()).padStart(2, '0');
+                timerSeconds = 3 * 60 * 60; // Reset timer 3 ore
                 btn.classList.remove('loading');
                 btn.innerText = "Sincronizza Notizie";
             });
@@ -220,6 +229,7 @@
             if(!isActive) element.classList.add('active');
         }
 
+        // Timer conto alla rovescia
         setInterval(() => {
             timerSeconds--;
             if (timerSeconds <= 0) fetchLiveNews();
@@ -231,6 +241,7 @@
                 `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
         }, 1000);
 
+        // Avvio automatico al caricamento
         fetchLiveNews();
     </script>
 </body>
