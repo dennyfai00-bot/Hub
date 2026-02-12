@@ -2,222 +2,234 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS MARBLE: Italian Live Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NEXUS: Global Intel</title>
     <style>
-        /* 1. RESET E BASE */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: #000; color: #fff; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
-
-        /* 2. SFONDO MARMO E LIQUID GLASS */
-        .background-fx { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; overflow: hidden; background: radial-gradient(circle at center, #001, #000); }
-        
-        .marble-texture { 
-            position: absolute; width: 200%; height: 200%; opacity: 0.15; 
-            background-image: linear-gradient(120deg, transparent 45%, #00ccff 48%, #fff 50%, transparent 52%), 
-                              linear-gradient(240deg, transparent 45%, #0044ff 48%, #fff 50%, transparent 52%); 
-            background-size: 100px 100px; filter: blur(3px); animation: marbleFloat 60s infinite linear; 
-        }
-        
-        @keyframes marbleFloat { from { transform: translate(-25%, -25%) rotate(0deg); } to { transform: translate(0%, 0%) rotate(5deg); } }
-        
-        .orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.4; animation: moveLiquid 20s infinite alternate ease-in-out; }
-        .orb-1 { width: 70vw; height: 70vw; background: #0044ff; top: -20%; left: -20%; }
-        .orb-2 { width: 50vw; height: 50vw; background: #00ccff; bottom: -10%; right: -10%; }
-        
-        @keyframes moveLiquid { 0% { transform: scale(1) translate(0,0); } 100% { transform: scale(1.2) translate(100px, 50px); } }
-
-        /* Fulmini */
-        .bolt {
-            position: absolute; top: -200px; width: 1px; height: 300px;
-            background: linear-gradient(to bottom, transparent, #00ccff, #fff);
-            box-shadow: 0 0 20px #00ccff; opacity: 0; animation: lightning 5s infinite;
-        }
-        @keyframes lightning {
-            0% { transform: translateY(0); opacity: 0; }
-            5% { opacity: 1; }
-            10% { opacity: 0; }
-            15% { transform: translateY(120vh); opacity: 0; }
+        /* --- 1. DESIGN SYSTEM --- */
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-purple: #bc13fe;
+            --glass-bg: rgba(20, 20, 20, 0.6);
+            --border-color: rgba(255, 255, 255, 0.1);
         }
 
-        /* 3. LAYOUT */
-        header { width: 100%; max-width: 900px; padding: 60px 20px 30px; text-align: center; z-index: 10; }
-        h1 { font-size: clamp(2.5rem, 8vw, 4.5rem); letter-spacing: 12px; text-shadow: 0 0 30px #00ccff; font-weight: 900; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; }
         
-        .controls { margin-top: 30px; display: flex; flex-direction: column; align-items: center; gap: 15px; }
-        
-        .reload-btn { 
-            background: rgba(0, 204, 255, 0.1); border: 1px solid #00ccff; color: #00ccff; 
-            padding: 12px 30px; border-radius: 50px; font-size: 0.9rem; font-weight: bold; 
-            letter-spacing: 2px; cursor: pointer; backdrop-filter: blur(10px); transition: all 0.3s ease; 
-            text-transform: uppercase; box-shadow: 0 0 15px rgba(0, 204, 255, 0.2);
-        }
-        
-        .reload-btn:hover { background: #00ccff; color: #000; box-shadow: 0 0 30px #00ccff; }
-        .reload-btn.loading { animation: pulseBtn 1s infinite; pointer-events: none; border-style: dashed; }
-        
-        @keyframes pulseBtn { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-
-        .status-info { font-size: 0.75rem; color: rgba(255, 255, 255, 0.5); letter-spacing: 1px; }
-
-        /* 4. SEZIONI E NEWS */
-        .container { width: 100%; max-width: 850px; padding: 20px; z-index: 5; display: flex; flex-direction: column; gap: 40px; padding-bottom: 80px; }
-        
-        .category-title { 
-            font-size: 1.6rem; margin-bottom: 20px; color: #fff; text-transform: uppercase; 
-            letter-spacing: 3px; border-left: 4px solid #00ccff; padding-left: 15px; 
+        body { 
+            background-color: #050505; 
+            color: #e0e0e0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh; 
+            overflow-x: hidden; 
+            padding-bottom: 50px;
         }
 
-        .news-bubble { 
-            background: rgba(255, 255, 255, 0.04); margin-bottom: 15px; border-radius: 20px; 
-            border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); 
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; overflow: hidden; 
+        /* --- 2. SFONDO ANIMATO --- */
+        .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; }
+        .orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.4; }
+        .orb-1 { width: 300px; height: 300px; background: var(--neon-blue); top: -50px; left: -50px; animation: float 10s infinite alternate; }
+        .orb-2 { width: 400px; height: 400px; background: var(--neon-purple); bottom: -100px; right: -50px; animation: float 15s infinite alternate-reverse; }
+        
+        @keyframes float { 0% { transform: translate(0, 0); } 100% { transform: translate(30px, 50px); } }
+
+        /* --- 3. HEADER --- */
+        header { 
+            width: 100%; 
+            max-width: 600px; 
+            padding: 40px 20px 20px; 
+            text-align: center; 
+            backdrop-filter: blur(5px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(0,0,0,0.3);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
-        
-        .news-bubble:hover { border-color: rgba(0, 204, 255, 0.5); background: rgba(255, 255, 255, 0.08); transform: translateY(-3px); }
-        
-        .news-header { padding: 20px 25px; display: flex; justify-content: space-between; align-items: center; }
-        
-        .news-time { font-size: 0.65rem; color: #00ccff; font-weight: bold; margin-bottom: 5px; display: block; text-transform: uppercase; }
-        
-        .news-headline { font-size: 1.15rem; font-weight: 600; line-height: 1.4; padding-right: 15px; }
-        
-        .news-details { 
-            max-height: 0; padding: 0 25px; color: #bbb; line-height: 1.7; 
-            transition: all 0.5s ease; font-size: 0.95rem; overflow: hidden;
+
+        h1 { 
+            font-size: 2.5rem; 
+            font-weight: 800; 
+            letter-spacing: 4px; 
+            background: linear-gradient(to right, #fff, var(--neon-blue)); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            margin-bottom: 10px;
         }
+
+        .controls { display: flex; justify-content: center; gap: 10px; }
+
+        button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--neon-blue);
+            color: var(--neon-blue);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:active { transform: scale(0.95); background: var(--neon-blue); color: #000; }
+        button.loading { opacity: 0.7; pointer-events: none; }
+
+        /* --- 4. NEWS CARDS --- */
+        .container { width: 100%; max-width: 600px; padding: 10px 20px; display: flex; flex-direction: column; gap: 30px; }
+
+        .section-title { 
+            font-size: 1.2rem; 
+            color: #fff; 
+            border-left: 3px solid var(--neon-blue); 
+            padding-left: 10px; 
+            margin-bottom: 15px; 
+            text-transform: uppercase; 
+            letter-spacing: 1px;
+        }
+
+        .news-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 12px;
+            transition: transform 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .news-card:active { transform: scale(0.98); background: rgba(255,255,255,0.1); }
+
+        .news-meta { font-size: 0.7rem; color: var(--neon-blue); margin-bottom: 5px; font-weight: 700; text-transform: uppercase; }
         
-        .news-bubble.active .news-details { max-height: 600px; padding-bottom: 25px; border-top: 1px solid rgba(0, 204, 255, 0.1); padding-top: 15px; }
-        
-        .news-bubble.active { border-color: #00ccff; background: rgba(0, 0, 0, 0.4); box-shadow: 0 10px 30px rgba(0, 204, 255, 0.1); }
-        
-        .icon-plus { color: #00ccff; font-size: 1.2rem; transition: 0.3s; }
-        .news-bubble.active .icon-plus { transform: rotate(45deg); color: #fff; }
+        .news-title { 
+            font-size: 1rem; 
+            line-height: 1.4; 
+            font-weight: 500; 
+            color: #fff; 
+            margin-bottom: 10px; 
+        }
+
+        .news-link {
+            display: inline-block;
+            font-size: 0.75rem;
+            color: #aaa;
+            text-decoration: none;
+            border-bottom: 1px dotted #aaa;
+        }
+
+        /* Indicatore di caricamento */
+        .loader { text-align: center; color: #666; font-size: 0.8rem; padding: 20px; }
 
     </style>
 </head>
 <body>
 
-    <div class="background-fx">
-        <div class="marble-texture"></div>
+    <div class="bg-layer">
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
-        <div class="bolt" style="left: 15%; animation-delay: 1s;"></div>
-        <div class="bolt" style="left: 85%; animation-delay: 3s;"></div>
     </div>
 
     <header>
         <h1>NEXUS</h1>
         <div class="controls">
-            <button id="reload-btn" class="reload-btn" onclick="fetchLiveNews()">Sincronizza Notizie</button>
-            <div class="status-info">
-                Ultimo update: <span id="last-update">--:--</span> | 
-                Prossimo in: <span id="next-update">03:00:00</span>
-            </div>
+            <button id="refresh-btn" onclick="updateAllNews()">Sincronizza Feed</button>
+        </div>
+        <div style="font-size: 0.7rem; color: #666; margin-top: 10px;">
+            Ultimo check: <span id="last-update">--:--</span>
         </div>
     </header>
 
     <div class="container">
         <section>
-            <h2 class="category-title">🌍 Geopolitica & Scenari</h2>
-            <div id="geo-news"></div>
+            <h2 class="section-title" style="border-color: #ff4444; color: #ffcccc;">🌍 Geopolitica & Mondo</h2>
+            <div id="geo-feed" class="feed-container"></div>
         </section>
 
         <section>
-            <h2 class="category-title">🎮 Gaming IT</h2>
-            <div id="gaming-news"></div>
+            <h2 class="section-title">🎮 Gaming & Console</h2>
+            <div id="game-feed" class="feed-container"></div>
         </section>
 
         <section>
-            <h2 class="category-title">💻 Tecnologia</h2>
-            <div id="tech-news"></div>
+            <h2 class="section-title" style="border-color: #bc13fe;">💻 Tech & Apple</h2>
+            <div id="tech-feed" class="feed-container"></div>
         </section>
-
+        
         <section>
-            <h2 class="category-title">🏎️ Formula 1</h2>
-            <div id="f1-news"></div>
+            <h2 class="section-title" style="border-color: #ffff00; color: #ffffcc;">🏎️ Formula 1</h2>
+            <div id="f1-feed" class="feed-container"></div>
         </section>
     </div>
 
     <script>
-        let timerSeconds = 3 * 60 * 60;
+        // Funzione sicura per scaricare i feed
+        async function fetchFeed(url, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '<div class="loader">Ricerca segnali in corso...</div>';
 
-        async function fetchRSS(url, elementId) {
-            const container = document.getElementById(elementId);
-            container.innerHTML = "<p style='padding:20px; color:#00ccff; font-size:0.8rem;'>Intercettando segnali...</p>";
-            
             try {
-                const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`);
+                // Usiamo rss2json con un parametro temporale (&t=...) per evitare che il telefono usi dati vecchi (cache)
+                const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}&t=${Date.now()}`;
+                
+                const response = await fetch(proxyUrl);
                 const data = await response.json();
 
-                if (data.status === 'ok' && data.items.length > 0) {
-                    container.innerHTML = data.items.slice(0, 4).map(item => `
-                        <div class="news-bubble" onclick="toggleNews(this)">
-                            <div class="news-header">
-                                <div>
-                                    <span class="news-time">${item.pubDate}</span>
-                                    <div class="news-headline">${item.title}</div>
-                                </div>
-                                <div class="icon-plus">＋</div>
-                            </div>
-                            <div class="news-details">
-                                ${item.description.replace(/<[^>]*>?/gm, '').substring(0, 200)}...
-                                <br><br>
-                                <a href="${item.link}" target="_blank" style="color:#00ccff; text-decoration:none; font-weight:bold; border-bottom:1px solid #00ccff;">ANALISI COMPLETA →</a>
-                            </div>
-                        </div>
-                    `).join('');
+                if (data.status === 'ok') {
+                    let html = '';
+                    // Prendiamo solo le prime 4 notizie per non intasare lo schermo dell'iPhone
+                    data.items.slice(0, 4).forEach(item => {
+                        // Puliamo la data per renderla leggibile
+                        const date = new Date(item.pubDate).toLocaleTimeString('it-IT', {hour: '2-digit', minute:'2-digit'});
+                        
+                        html += `
+                        <div class="news-card" onclick="window.open('${item.link}', '_blank')">
+                            <div class="news-meta">ORE ${date}</div>
+                            <div class="news-title">${item.title}</div>
+                            <div class="news-link">Tocca per leggere su ${data.feed.title}</div>
+                        </div>`;
+                    });
+                    container.innerHTML = html;
                 } else {
-                    container.innerHTML = "<p style='padding:20px; font-size:0.9rem; color:#666;'>Nessun dato ricevuto.</p>";
+                    container.innerHTML = '<div class="loader" style="color:#ff4444">Feed momentaneamente non disponibile.</div>';
                 }
             } catch (error) {
-                container.innerHTML = "<p style='padding:20px; color:#ff4444;'>Errore di frequenza.</p>";
+                console.error(error);
+                container.innerHTML = '<div class="loader" style="color:#ff4444">Errore di connessione. Riprova.</div>';
             }
         }
 
-        function fetchLiveNews() {
-            const btn = document.getElementById('reload-btn');
+        function updateAllNews() {
+            const btn = document.getElementById('refresh-btn');
+            btn.innerText = "Aggiornamento...";
             btn.classList.add('loading');
-            btn.innerText = "Sincronizzazione...";
 
-            Promise.all([
-                // FEED ISPI GEOPOLITICA
-                fetchRSS('https://www.ispionline.it/it/rss', 'geo-news'),
-                
-                // GAMING
-                fetchRSS('https://www.everyeye.it/rss/', 'gaming-news'),
-                
-                // TECH
-                fetchRSS('https://www.hdblog.it/rss/', 'tech-news'),
-                
-                // F1
-                fetchRSS('https://it.motorsport.com/rss/f1/news/', 'f1-news')
-            ]).then(() => {
-                document.getElementById('last-update').innerText = new Date().toLocaleTimeString('it-IT', {hour: '2-digit', minute:'2-digit'});
-                timerSeconds = 3 * 60 * 60;
-                btn.classList.remove('loading');
-                btn.innerText = "Sincronizza Notizie";
-            });
-        }
-
-        function toggleNews(element) {
-            const isActive = element.classList.contains('active');
-            document.querySelectorAll('.news-bubble').forEach(b => b.classList.remove('active'));
-            if(!isActive) element.classList.add('active');
-        }
-
-        setInterval(() => {
-            timerSeconds--;
-            if (timerSeconds <= 0) fetchLiveNews();
+            // Lista delle fonti (Le più affidabili e veloci in Italia)
+            // 1. ANSA Mondo (Geopolitica sicura)
+            fetchFeed('https://www.ansa.it/sito/notizie/mondo/mondo_rss.xml', 'geo-feed');
             
-            const h = Math.floor(timerSeconds / 3600);
-            const m = Math.floor((timerSeconds % 3600) / 60);
-            const s = timerSeconds % 60;
-            document.getElementById('next-update').innerText = 
-                `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-        }, 1000);
+            // 2. Everyeye (Gaming Generale)
+            fetchFeed('https://www.everyeye.it/rss/', 'game-feed');
+            
+            // 3. HDBlog (Tech/Apple)
+            fetchFeed('https://www.hdblog.it/rss/', 'tech-feed');
 
-        fetchLiveNews();
+            // 4. Motorsport (F1)
+            fetchFeed('https://it.motorsport.com/rss/f1/news/', 'f1-feed');
+
+            // Aggiorna l'orario
+            setTimeout(() => {
+                document.getElementById('last-update').innerText = new Date().toLocaleTimeString('it-IT');
+                btn.innerText = "Sincronizza Feed";
+                btn.classList.remove('loading');
+            }, 1500); // Aspetta 1.5 secondi per dare feedback visivo
+        }
+
+        // Avvia tutto appena apri la pagina
+        updateAllNews();
     </script>
+
 </body>
 </html>
